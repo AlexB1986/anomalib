@@ -1,0 +1,41 @@
+name: Fluxion Security Pipeline
+
+on:
+    workflow_dispatch:
+    pull_request:
+        branches: [main, develop]
+
+jobs:
+    # Security and compliance checks
+    security-scan:
+        name: Security Scanning
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            security-events: write
+            actions: read
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            # Infrastructure as Code security scanning
+            - name: Run Checkov action
+              id: checkov
+              uses: bridgecrewio/checkov-action@master
+              with:
+                  directory: .
+                  framework: terraform,kubernetes,dockerfile,secrets
+                  output_format: sarif
+                  output_file_path: reports/results.sarif
+                  download_external_modules: true
+                  quiet: true
+                  soft_fail: false
+
+            - name: Upload Checkov results
+              uses: github/codeql-action/upload-sarif@v2
+              if: always()
+              with:
+                  sarif_file: reports/results.sarif
