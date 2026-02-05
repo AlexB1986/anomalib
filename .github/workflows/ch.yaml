@@ -17,7 +17,7 @@ jobs:
 
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
                   fetch-depth: 0
 
@@ -35,7 +35,7 @@ jobs:
                   soft_fail: false
 
             - name: Upload Checkov results
-              uses: github/codeql-action/upload-sarif@v2
+              uses: github/codeql-action/upload-sarif@6bc82e05fd0ea64601dd4b465378bbcf57de0314 # v4.32.1
               if: always()
               with:
                   sarif_file: reports/results.sarif
